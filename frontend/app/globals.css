@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* =========================
+   SCISEEK DARK BLUE THEME
+   ========================= */
+
+:root {
+  /* Base */
+  --background: #0b1220;
+  --foreground: #e5e7eb;
+
+  /* Surfaces */
+  --card: #111827;
+  --panel: #0f172a;
+
+  /* UI */
+  --border: #1f2937;
+  --input: #1f2937;
+
+  /* Text */
+  --muted: #9ca3af;
+
+  /* Brand */
+  --primary: #06b6d4;
+
+  /* Sidebar */
+  --sidebar: #0f172a;
+  --sidebar-hover: #1e293b;
+  --sidebar-active: #334155;
+}
+
+/* =========================
+   BASE STYLES
+   ========================= */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, Exo 2;
+}
+
+/* subtle gradient for premium feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(96,165,250,0.08), transparent 30%);
+  pointer-events: none;
+}
+
+.logo-wordmark {
+  color: var(--foreground);
+}
+
+.logo-wordmark span { color: var(--primary); }
