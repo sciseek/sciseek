@@ -458,7 +458,7 @@ export default function HomePage() {
     let newAnswerData: AskResponse | null = null;
 
     try {
-      const res = await fetch("https://sciseek-backend.onrender.com", {
+      const res = await fetch("https://YOUR-RENDER-URL.onrender.com/api/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
