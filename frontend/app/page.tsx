@@ -76,7 +76,7 @@ const starterHistory: HistoryItem[] = [
     id: "2",
     question: "Why do black holes evaporate?",
     answer:
-      "Black holes lose mass due to Hawking radiation caused by quantum effects near the event horizon.",
+      "Black holes lose mass due to  aHawking radiation caused by quantum effects near the event horizon.",
     createdAt: "2026-04-06T16:30:00.000Z",
     answerData: {
       is_science: true,
