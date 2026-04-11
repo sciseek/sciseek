@@ -603,7 +603,7 @@ export default function HomePage() {
           <div className="border-b border-[var(--border)] p-4">
             <button
               onClick={handleNewQuestion}
-              className="w-full rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black transition hover:opacity-70 cursor:pointer"
+              className="w-full rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black cursor-pointer transition hover:opacity-70"
             >
               + New Question
             </button>
