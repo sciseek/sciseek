@@ -37,6 +37,10 @@ type AskResponse = {
   message?: string | null;
 };
 
+type AnalyticsResponse = {
+  success: boolean;
+};
+
 type HistoryItem = {
   id: string;
   question: string;
@@ -191,6 +195,17 @@ const starterHistory: HistoryItem[] = [
 
 const DISPLAY_LIMIT = 15;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://sciseek-backend.onrender.com";
+
+function getOrCreateSessionId() {
+  if (typeof window === "undefined") return "";
+
+  const existing = window.sessionStorage.getItem("sciseek_session_id");
+  if (existing) return existing;
+
+  const id = window.crypto.randomUUID();
+  window.sessionStorage.setItem("sciseek_session_id", id);
+  return id;
+}
 
 
 function SkeletonLine({
@@ -375,6 +390,7 @@ export default function HomePage() {
   const [email, setEmail] = useState("");
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
+  const [sessionId] = useState(() => getOrCreateSessionId());
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -406,6 +422,28 @@ export default function HomePage() {
   useEffect(() => {
     localStorage.setItem("sciseek-history", JSON.stringify(historyItems));
   }, [historyItems]);
+
+  async function trackFrontendEvent(
+    eventName: string,
+    properties: Record<string, unknown> = {}
+  ) {
+    try {
+      await fetch(`${API_BASE_URL}/api/analytics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-session-id": sessionId,
+        },
+        body: JSON.stringify({
+          event_name: eventName,
+          session_id: sessionId,
+          properties,
+        }),
+      });
+    } catch (error) {
+      console.error("Analytics event failed:", error);
+    }
+  }
 
   function resizeTextarea() {
     if (textareaRef.current) {
@@ -475,6 +513,7 @@ export default function HomePage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-session-id": sessionId,
         },
         body: JSON.stringify({
           question: trimmedQuestion,
@@ -565,6 +604,11 @@ export default function HomePage() {
   }
 
   function askRelatedQuestion(related: string) {
+    void trackFrontendEvent("related_question_clicked", {
+      related_question: related,
+      source_question: activeQuestion,
+    });
+
     setQuestion(related);
     setAnswer(null);
     setAnswerData(null);
@@ -597,6 +641,7 @@ export default function HomePage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-session-id": sessionId,
         },
         body: JSON.stringify({
           email: trimmedEmail,
@@ -952,6 +997,35 @@ export default function HomePage() {
                 </div>
               )}
 
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPaywall(true);
+                    void trackFrontendEvent("pro_feature_clicked", {
+                      feature: "explain_this",
+                      location: "composer",
+                    });
+                  }}
+                  className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs text-amber-200 transition hover:bg-amber-400/15"
+                >
+                  Explain This (Pro) 🔒
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPaywall(true);
+                    void trackFrontendEvent("pro_feature_clicked", {
+                      feature: "fact_check_mode",
+                      location: "composer",
+                    });
+                  }}
+                  className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs text-amber-200 transition hover:bg-amber-400/15"
+                >
+                  Fact Check Mode 🔒
+                </button>
+              </div>
+
               {isLoading && (
                 <div className="mt-3 text-sm text-slate-400">Searching...</div>
               )}
@@ -1008,12 +1082,30 @@ export default function HomePage() {
                 )}
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void trackFrontendEvent("pro_feature_clicked", {
+                        feature: "explain_this",
+                        location: "paywall",
+                      });
+                    }}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200 transition hover:bg-white/10"
+                  >
                     Explain This (Pro)
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void trackFrontendEvent("pro_feature_clicked", {
+                        feature: "fact_check_mode",
+                        location: "paywall",
+                      });
+                    }}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200 transition hover:bg-white/10"
+                  >
                     Fact Check Mode
-                  </span>
+                  </button>
                 </div>
               </div>
             )}
