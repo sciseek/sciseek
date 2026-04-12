@@ -5,28 +5,10 @@
    ========================= */
 
 :root {
-  /* Base */
-  --background: #0b1220;
-  --foreground: #e5e7eb;
-
-  /* Surfaces */
-  --card: #111827;
-  --panel: #0f172a;
-
-  /* UI */
-  --border: #1f2937;
-  --input: #1f2937;
-
-  /* Text */
-  --muted: #9ca3af;
-
-  /* Brand */
-  --primary: #06b6d4;
-
-  /* Sidebar */
-  --sidebar: #0f172a;
-  --sidebar-hover: #1e293b;
-  --sidebar-active: #334155;
+  --primary: #3b82f6;
+  --border: rgba(255, 255, 255, 0.1);
+  --panel: rgba(255, 255, 255, 0.05);
+  --foreground: #ffffff;
 }
 
 /* =========================
