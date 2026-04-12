@@ -365,6 +365,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [tier, setTier] = useState<"free" | "paid">("free");
   const [mode, setMode] = useState<"simple" | "standard" | "deep">("standard");
+  const [isAskHovered, setIsAskHovered] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -870,16 +871,22 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleAsk}
-                  disabled={isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 text-black transition hover:bg-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-                >
-                  {isLoading && (
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent"/>
-                  )}
-                  {isLoading ? "Thinking..." : "Ask"}
-                </button>
+				<button
+				  onClick={handleAsk}
+				  onMouseEnter={() => setIsAskHovered(true)}
+				  onMouseLeave={() => setIsAskHovered(false)}
+				  disabled={isLoading}
+				  style={{
+				    backgroundColor: isAskHovered && !isLoading ? "#60a5fa" : "#3b82f6",
+				    cursor: isLoading ? "not-allowed" : "pointer",
+				  }}
+				  className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-black transition sm:w-auto"
+				>
+				  {isLoading && (
+				    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
+				  )}
+				  {isLoading ? "Thinking..." : "Ask"}
+				</button>
               </div>
 
               {isLoading && (
