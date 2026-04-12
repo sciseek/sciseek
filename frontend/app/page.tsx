@@ -36,8 +36,6 @@ type HistoryItem = {
   createdAt: string;
 };
 
-const [isAskHovered, setIsAskHovered] = useState(false);
-
 const starterHistory: HistoryItem[] = [
   {
     id: "1",
