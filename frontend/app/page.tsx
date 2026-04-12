@@ -270,7 +270,7 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
   return (
     <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-14">
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_24px_rgba(59,130,246,0.12)] sm:mb-5 sm:h-14 sm:w-14">
-        <SciSeekLogo className="h-40 w-40 border-0 bg-transparent" />
+        <SciSeekLogo className="h-14 w-14 border-0 bg-transparent" />
       </div>
 
       <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-4xl">
