@@ -1107,7 +1107,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <SciSeekLogo className="h-9 w-9" />
                 <div>
-                  <div className="font-medium text-white/85">SciSeek</div>
+                  <div className="font-medium text-white/85"><h1 className="logo-wordmark">Sci<span>Seek</span></h1></div>
                   <div className="text-xs">
                     Structured science answers for curious minds.
                   </div>
