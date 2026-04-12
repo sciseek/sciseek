@@ -43,3 +43,14 @@ class WaitlistSignup(Base):
     source = Column(String, nullable=True)
     identifier = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_name = Column(String, nullable=False, index=True)
+    identifier = Column(String, nullable=True, index=True)
+    session_id = Column(String, nullable=True, index=True)
+    properties = Column(JSON, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
