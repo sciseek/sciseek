@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import SciSeekLogo from "./components/sciseek-logo";
 
 type AnswerSection = {
   title: string;
