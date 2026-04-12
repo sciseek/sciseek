@@ -180,41 +180,7 @@ const starterHistory: HistoryItem[] = [
 
 const DISPLAY_LIMIT = 15;
 
-function SciSeekLogo({ className = "h-7 w-7" }: { className?: string }) {
-  return (
-    <div
-      className={`relative flex items-center justify-center rounded-xl border border-white/10 bg-white/5 ${className}`}
-    >
-      <svg
-        viewBox="0 0 64 64"
-        className="h-[80%] w-[80%]"
-        fill="none"
-        aria-hidden="true"
-      >
-        <circle cx="32" cy="32" r="6.5" fill="#22d3ee" />
-        <ellipse
-          cx="32"
-          cy="32"
-          rx="20"
-          ry="12"
-          stroke="#22d3ee"
-          strokeWidth="3"
-        />
-        <ellipse
-          cx="32"
-          cy="32"
-          rx="20"
-          ry="12"
-          transform="rotate(60 32 32)"
-          stroke="#22d3ee"
-          strokeWidth="3"
-          opacity="0.75"
-        />
-        <circle cx="48" cy="30" r="3" fill="#fde047" />
-      </svg>
-    </div>
-  );
-}
+<SciSeekLogo />
 
 function SkeletonLine({
   width = "w-full",
@@ -639,7 +605,7 @@ export default function HomePage() {
               <SciSeekLogo className="h-11 w-11" />
               <div className="min-w-0">
                 <div className="text-base font-semibold tracking-tight text-white">
-                  SciSeek
+                  <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
                 </div>
                 <div className="text-xs text-slate-400">
                   Structured science answers
@@ -754,7 +720,7 @@ export default function HomePage() {
                 <SciSeekLogo className="h-10 w-10 sm:h-12 sm:w-12" />
                 <div className="min-w-0">
                   <div className="text-lg font-semibold tracking-tight text-white sm:text-2xl">
-                    SciSeek
+                    <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
                   </div>
                   <div className="text-xs text-slate-400 sm:text-sm">
                     Search smarter. Understand deeper.
@@ -876,7 +842,7 @@ export default function HomePage() {
                               if (!isDisabled) setMode(m);
                             }}
                             disabled={isDisabled}
-                            className={`px-3 py-2 text-sm font-semibold capitalize transition-colors duration-150 ${
+                            className={`px-3 py-2 text-sm font-medium capitalize transition-colors duration-150 ${
                               isActive
                                 ? "cursor-pointer bg-blue-500 text-black"
                                 : isDisabled
