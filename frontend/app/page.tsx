@@ -3,8 +3,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import SiteFooter from "./components/site-footer";
-import SciSeekLogo from "./components/sciseek-logo";
 
 type AnswerSection = {
   title: string;
@@ -76,7 +74,7 @@ const starterHistory: HistoryItem[] = [
     id: "2",
     question: "Why do black holes evaporate?",
     answer:
-      "Black holes lose mass due to  aHawking radiation caused by quantum effects near the event horizon.",
+      "Black holes lose mass due to Hawking radiation caused by quantum effects near the event horizon.",
     createdAt: "2026-04-06T16:30:00.000Z",
     answerData: {
       is_science: true,
@@ -182,7 +180,41 @@ const starterHistory: HistoryItem[] = [
 
 const DISPLAY_LIMIT = 15;
 
-<SciSeekLogo />
+function SciSeekLogo({ className = "h-7 w-7" }: { className?: string }) {
+  return (
+    <div
+      className={`relative flex items-center justify-center rounded-xl border border-white/10 bg-white/5 ${className}`}
+    >
+      <svg
+        viewBox="0 0 64 64"
+        className="h-[80%] w-[80%]"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle cx="32" cy="32" r="6.5" fill="#22d3ee" />
+        <ellipse
+          cx="32"
+          cy="32"
+          rx="20"
+          ry="12"
+          stroke="#22d3ee"
+          strokeWidth="3"
+        />
+        <ellipse
+          cx="32"
+          cy="32"
+          rx="20"
+          ry="12"
+          transform="rotate(60 32 32)"
+          stroke="#22d3ee"
+          strokeWidth="3"
+          opacity="0.75"
+        />
+        <circle cx="48" cy="30" r="3" fill="#fde047" />
+      </svg>
+    </div>
+  );
+}
 
 function SkeletonLine({
   width = "w-full",
@@ -191,15 +223,13 @@ function SkeletonLine({
   width?: string;
   height?: string;
 }) {
-  return (
-    <div className={`animate-pulse rounded-md bg-white/8 ${height} ${width}`} />
-  );
+  return <div className={`animate-pulse rounded-md bg-white/10 ${height} ${width}`} />;
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-6">
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6">
+    <div className="space-y-5">
+      <section className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
         <SkeletonLine width="w-2/3" height="h-8" />
         <div className="mt-4 space-y-3">
           <SkeletonLine width="w-full" />
@@ -209,7 +239,7 @@ function LoadingSkeleton() {
       </section>
 
       <section className="space-y-4">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6">
+        <div className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
           <SkeletonLine width="w-1/3" height="h-6" />
           <div className="mt-4 space-y-3">
             <SkeletonLine width="w-full" />
@@ -218,7 +248,7 @@ function LoadingSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6">
+        <div className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
           <SkeletonLine width="w-1/4" height="h-6" />
           <div className="mt-4 space-y-3">
             <SkeletonLine width="w-full" />
@@ -228,19 +258,19 @@ function LoadingSkeleton() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6">
+      <section className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
         <SkeletonLine width="w-32" height="h-6" />
         <div className="mt-4 space-y-4">
           <div className="flex items-start gap-3">
-            <div className="mt-1 h-2 w-2 rounded-full bg-[var(--primary)]/60" />
+            <div className="mt-1 h-2 w-2 rounded-full bg-blue-400/70" />
             <SkeletonLine width="w-5/6" />
           </div>
           <div className="flex items-start gap-3">
-            <div className="mt-1 h-2 w-2 rounded-full bg-[var(--primary)]/60" />
+            <div className="mt-1 h-2 w-2 rounded-full bg-blue-400/70" />
             <SkeletonLine width="w-4/5" />
           </div>
           <div className="flex items-start gap-3">
-            <div className="mt-1 h-2 w-2 rounded-full bg-[var(--primary)]/60" />
+            <div className="mt-1 h-2 w-2 rounded-full bg-blue-400/70" />
             <SkeletonLine width="w-3/4" />
           </div>
         </div>
@@ -272,15 +302,15 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
 
   return (
     <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-14">
-      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--panel)]/80 shadow-[0_0_24px_rgba(96,165,250,0.12)] sm:mb-5 sm:h-14 sm:w-14">
-        <SciSeekLogo className="h-40 w-40 border-0 bg-transparent shadow-none" />
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_24px_rgba(59,130,246,0.12)] sm:mb-5 sm:h-14 sm:w-14">
+        <SciSeekLogo className="h-10 w-10 border-0 bg-transparent" />
       </div>
 
       <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-4xl">
-        Get better science answers.
+        Ask better science questions.
       </h1>
 
-      <p className="mt-4 text-[var(--muted)]">
+      <p className="mt-4 text-sm text-slate-400 sm:text-base">
         SciSeek gives structured, evidence-based answers with clear sections,
         key takeaways, and sources.
       </p>
@@ -290,7 +320,7 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
           <button
             key={q}
             onClick={() => onAsk(q)}
-            className="rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-left text-sm text-[var(--foreground)] transition hover:border-[var(--primary)] hover:text-white hover:shadow-[0_0_12px_rgba(96,165,250,0.15)]"
+            className="cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-200 transition-colors duration-150 hover:border-blue-400 hover:bg-white/10 hover:text-white"
           >
             {q}
           </button>
@@ -303,7 +333,6 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
 function isToday(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
-
   return date.toDateString() === now.toDateString();
 }
 
@@ -311,7 +340,6 @@ function isYesterday(dateString: string) {
   const date = new Date(dateString);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-
   return date.toDateString() === yesterday.toDateString();
 }
 
@@ -365,7 +393,6 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [tier, setTier] = useState<"free" | "paid">("free");
   const [mode, setMode] = useState<"simple" | "standard" | "deep">("standard");
-  const [isAskHovered, setIsAskHovered] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -595,29 +622,26 @@ export default function HomePage() {
   const { today, yesterday, older } = groupHistory(visibleHistory);
 
   return (
-    <div
-      ref={topRef}
-      className="min-h-screen bg-[var(--background)] text-[var(--foreground)]"
-    >
+    <div ref={topRef} className="min-h-screen bg-slate-950 text-slate-100">
       <div className="flex min-h-screen">
-        <aside className="hidden w-80 shrink-0 border-r border-[var(--border)] bg-[var(--sidebar)] lg:flex lg:flex-col">
-          <div className="border-b border-[var(--border)] p-4">
+        <aside className="hidden w-80 shrink-0 border-r border-white/10 bg-slate-900 lg:flex lg:flex-col">
+          <div className="border-b border-white/10 p-4">
             <button
               onClick={handleNewQuestion}
-              className="w-full rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black cursor-pointer transition hover:opacity-70"
+              className="w-full cursor-pointer rounded-xl bg-blue-500 px-4 py-3 text-left text-sm font-medium text-black transition-colors duration-150 hover:bg-blue-400"
             >
               + New Question
             </button>
           </div>
 
-          <div className="border-b border-[var(--border)] px-4 py-4">
+          <div className="border-b border-white/10 px-4 py-4">
             <div className="flex items-center gap-3">
-              <SciSeekLogo className="h-12 w-12" />
+              <SciSeekLogo className="h-11 w-11" />
               <div className="min-w-0">
-                <div className="text-base text-xl font-semibold tracking-tight text-white">
-                  <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
+                <div className="text-base font-semibold tracking-tight text-white">
+                  SciSeek
                 </div>
-                <div className="text-xs text-[var(--muted)]">
+                <div className="text-xs text-slate-400">
                   Structured science answers
                 </div>
               </div>
@@ -629,7 +653,7 @@ export default function HomePage() {
               <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">
                 Recent Questions
               </div>
-              <div className="mt-2 h-px bg-white/12" />
+              <div className="mt-2 h-px bg-white/10" />
             </div>
 
             <div className="space-y-5">
@@ -639,7 +663,7 @@ export default function HomePage() {
                     <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
                       Today
                     </span>
-                    <div className="h-px flex-1 bg-white/12" />
+                    <div className="h-px flex-1 bg-white/10" />
                   </div>
 
                   <div className="space-y-1.5">
@@ -647,10 +671,10 @@ export default function HomePage() {
                       <button
                         key={item.id}
                         onClick={() => handleHistoryClick(item)}
-                        className={`w-full rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition ${
+                        className={`w-full cursor-pointer rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition-colors duration-150 ${
                           activeQuestion === item.question
-                            ? "bg-[var(--sidebar-active)] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-                            : "text-white/75 hover:bg-[var(--sidebar-hover)] hover:text-white"
+                            ? "bg-white/12 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+                            : "text-white/75 hover:bg-white/10 hover:text-white"
                         }`}
                       >
                         {item.question}
@@ -666,7 +690,7 @@ export default function HomePage() {
                     <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
                       Yesterday
                     </span>
-                    <div className="h-px flex-1 bg-white/12" />
+                    <div className="h-px flex-1 bg-white/10" />
                   </div>
 
                   <div className="space-y-1.5">
@@ -674,10 +698,10 @@ export default function HomePage() {
                       <button
                         key={item.id}
                         onClick={() => handleHistoryClick(item)}
-                        className={`w-full rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition ${
+                        className={`w-full cursor-pointer rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition-colors duration-150 ${
                           activeQuestion === item.question
-                            ? "bg-[var(--sidebar-active)] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-                            : "text-white/75 hover:bg-[var(--sidebar-hover)] hover:text-white"
+                            ? "bg-white/12 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+                            : "text-white/75 hover:bg-white/10 hover:text-white"
                         }`}
                       >
                         {item.question}
@@ -693,7 +717,7 @@ export default function HomePage() {
                     <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
                       Older
                     </span>
-                    <div className="h-px flex-1 bg-white/12" />
+                    <div className="h-px flex-1 bg-white/10" />
                   </div>
 
                   <div className="space-y-1.5">
@@ -701,10 +725,10 @@ export default function HomePage() {
                       <button
                         key={item.id}
                         onClick={() => handleHistoryClick(item)}
-                        className={`w-full rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition ${
+                        className={`w-full cursor-pointer rounded-xl px-3 py-2.5 text-left text-sm leading-6 transition-colors duration-150 ${
                           activeQuestion === item.question
-                            ? "bg-[var(--sidebar-active)] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-                            : "text-white/75 hover:bg-[var(--sidebar-hover)] hover:text-white"
+                            ? "bg-white/12 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+                            : "text-white/75 hover:bg-white/10 hover:text-white"
                         }`}
                       >
                         {item.question}
@@ -715,7 +739,7 @@ export default function HomePage() {
               )}
 
               {historyItems.length > DISPLAY_LIMIT && (
-                <button className="px-2 text-xs font-medium text-white/45 transition hover:text-white">
+                <button className="cursor-pointer px-2 text-xs font-medium text-white/45 transition-colors duration-150 hover:text-white">
                   View all history →
                 </button>
               )}
@@ -724,60 +748,62 @@ export default function HomePage() {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur">
+          <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/80 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
               <div className="flex min-w-0 items-center gap-3">
-                <SciSeekLogo className="h-10 w-10 sm:h-15 sm:w-15" />
-
+                <SciSeekLogo className="h-10 w-10 sm:h-12 sm:w-12" />
                 <div className="min-w-0">
-                  <div className="text-lg font-semibold tracking-tight text-white sm:text-3xl">
-                    <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
+                  <div className="text-lg font-semibold tracking-tight text-white sm:text-2xl">
+                    SciSeek
                   </div>
-                  <div className="text-xs text-[var(--muted)] sm:text-sm">
+                  <div className="text-xs text-slate-400 sm:text-sm">
                     Search smarter. Understand deeper.
                   </div>
                 </div>
               </div>
 
-              <nav className="hidden items-center gap-2 md:flex">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handleNewQuestion}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-sm text-white transition hover:bg-white/5 lg:hidden"
+                  className="cursor-pointer rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white transition-colors duration-150 hover:bg-white/10 lg:hidden"
                 >
                   New
-                </button>			  
-                <Link
-                  href="/about"
-                  className="rounded-lg px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
-                >
-                  About
-                </Link>
-                <Link
-                  href="/story"
-                  className="rounded-lg px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
-                >
-                  Story
-                </Link>
-                <Link
-                  href="/contact"
-                  className="rounded-lg px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
-                >
-                  Contact
-                </Link>
-              </nav>
+                </button>
+
+                <nav className="hidden items-center gap-2 md:flex">
+                  <Link
+                    href="/about"
+                    className="rounded-lg px-3 py-2 text-sm text-white/70 transition-colors duration-150 hover:bg-white/5 hover:text-blue-300"
+                  >
+                    About
+                  </Link>
+                  <Link
+                    href="/story"
+                    className="rounded-lg px-3 py-2 text-sm text-white/70 transition-colors duration-150 hover:bg-white/5 hover:text-blue-300"
+                  >
+                    Story
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="rounded-lg px-3 py-2 text-sm text-white/70 transition-colors duration-150 hover:bg-white/5 hover:text-blue-300"
+                  >
+                    Contact
+                  </Link>
+                </nav>
+              </div>
             </div>
           </header>
 
           <main className="mx-auto w-full max-w-5xl flex-1 space-y-5 p-4 sm:space-y-6 sm:p-6">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_0_0_1px_rgba(96,165,250,0.04),0_10px_30px_rgba(0,0,0,0.18)]">
+            <div className="rounded-2xl border border-white/10 bg-slate-900 p-4 shadow-[0_0_0_1px_rgba(59,130,246,0.04),0_10px_30px_rgba(0,0,0,0.18)]">
               <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
-                <span className="rounded-full border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1 text-[var(--foreground)]">
+                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-slate-200">
                   Evidence-based
                 </span>
-                <span className="rounded-full border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1 text-[var(--foreground)]">
+                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-slate-200">
                   Structured answers
                 </span>
-                <span className="rounded-full border border-[var(--border)] bg-[var(--panel)] px-2.5 py-1 text-[var(--foreground)]">
+                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-slate-200">
                   Sources included
                 </span>
               </div>
@@ -799,18 +825,18 @@ export default function HomePage() {
                 }}
                 placeholder="Ask anything scientific..."
                 rows={1}
-                className="w-full resize-none bg-transparent text-base text-white outline-none placeholder:text-[var(--muted)] sm:text-[15px]"
+                className="w-full resize-none bg-transparent text-base text-white outline-none placeholder:text-slate-400 sm:text-[15px]"
               />
 
-              <div className="mt-3 text-xs text-[var(--muted)]">
+              <div className="mt-3 text-xs text-slate-400">
                 Get a hook, summary, sections, key points, related questions, and
                 citations.
               </div>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--panel)]/60 px-3 py-2">
+                <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
                   <div className="flex items-center gap-2">
-                    <label className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
+                    <label className="text-xs font-medium uppercase tracking-wide text-slate-400">
                       Tier
                     </label>
                     <select
@@ -823,7 +849,7 @@ export default function HomePage() {
                           setMode("standard");
                         }
                       }}
-                      className="rounded-lg border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-sm text-white outline-none"
+                      className="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none"
                     >
                       <option value="free">Free</option>
                       <option value="paid">Paid</option>
@@ -833,11 +859,11 @@ export default function HomePage() {
                   <div className="h-4 w-px bg-white/10" />
 
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
+                    <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
                       Mode
                     </span>
 
-                    <div className="flex overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--panel)]">
+                    <div className="flex overflow-hidden rounded-lg border border-white/10 bg-slate-900">
                       {(["simple", "standard", "deep"] as const).map((m) => {
                         const isDisabled = tier === "free" && m === "deep";
                         const isActive = mode === m;
@@ -850,12 +876,12 @@ export default function HomePage() {
                               if (!isDisabled) setMode(m);
                             }}
                             disabled={isDisabled}
-                            className={`px-3 py-2 text-sm font-semibold capitalize transition ${
+                            className={`px-3 py-2 text-sm font-semibold capitalize transition-colors duration-150 ${
                               isActive
-                                ? "bg-[var(--primary)] text-black"
+                                ? "cursor-pointer bg-blue-500 text-black"
                                 : isDisabled
                                   ? "cursor-not-allowed text-white/30"
-                                  : "text-white/75 hover:bg-white/5 hover:text-white"
+                                  : "cursor-pointer text-white/75 hover:bg-white/10 hover:text-white"
                             }`}
                             title={isDisabled ? "More detailed analysis (Paid)" : ""}
                           >
@@ -871,26 +897,20 @@ export default function HomePage() {
                   </div>
                 </div>
 
-				<button
-				  onClick={handleAsk}
-				  onMouseEnter={() => setIsAskHovered(true)}
-				  onMouseLeave={() => setIsAskHovered(false)}
-				  disabled={isLoading}
-				  style={{
-				    backgroundColor: isAskHovered && !isLoading ? "#60a5fa" : "#3b82f6",
-				    cursor: isLoading ? "not-allowed" : "pointer",
-				  }}
-				  className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-black transition sm:w-auto"
-				>
-				  {isLoading && (
-				    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
-				  )}
-				  {isLoading ? "Thinking..." : "Ask"}
-				</button>
+                <button
+                  onClick={handleAsk}
+                  disabled={isLoading}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 text-black transition-colors duration-150 hover:bg-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                >
+                  {isLoading && (
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
+                  )}
+                  {isLoading ? "Thinking..." : "Ask"}
+                </button>
               </div>
 
               {isLoading && (
-                <div className="mt-3 text-sm text-[var(--muted)]">Searching...</div>
+                <div className="mt-3 text-sm text-slate-400">Searching...</div>
               )}
             </div>
 
@@ -916,9 +936,9 @@ export default function HomePage() {
                       variants={shouldReduceMotion ? undefined : itemVariants}
                       initial={shouldReduceMotion ? undefined : "hidden"}
                       animate={shouldReduceMotion ? undefined : "visible"}
-                      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6"
+                      className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6"
                     >
-                      <div className="mb-2 text-sm text-[var(--muted)]">Answer</div>
+                      <div className="mb-2 text-sm text-slate-400">Answer</div>
                       <p className="leading-7">{answerData.refusal_message}</p>
                     </motion.section>
                   ) : (
@@ -932,7 +952,7 @@ export default function HomePage() {
                         <motion.section
                           layout
                           variants={shouldReduceMotion ? undefined : itemVariants}
-                          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6 shadow-[0_0_0_1px_rgba(96,165,250,0.05),0_8px_30px_rgba(0,0,0,0.25)]"
+                          className="rounded-2xl border border-white/10 bg-slate-900 p-4 shadow-[0_0_0_1px_rgba(59,130,246,0.05),0_8px_30px_rgba(0,0,0,0.25)] sm:p-6"
                         >
                           {answerData.hook && (
                             <h2 className="text-3xl font-semibold leading-tight tracking-tight text-white">
@@ -941,7 +961,7 @@ export default function HomePage() {
                           )}
 
                           {answerData.short_summary && (
-                            <p className="mt-3 leading-7 text-[var(--foreground)]">
+                            <p className="mt-3 leading-7 text-slate-200">
                               {answerData.short_summary}
                             </p>
                           )}
@@ -955,12 +975,12 @@ export default function HomePage() {
                               key={`${section.title}-${index}`}
                               layout
                               variants={shouldReduceMotion ? undefined : itemVariants}
-                              className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6 transition hover:border-[var(--primary)]/40"
+                              className="rounded-2xl border border-white/10 bg-slate-900 p-4 transition-colors duration-150 hover:border-blue-400/50 sm:p-6"
                             >
                               <h3 className="text-lg font-semibold text-white">
                                 {section.title}
                               </h3>
-                              <p className="mt-3 whitespace-pre-wrap leading-7 text-[var(--foreground)]">
+                              <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-200">
                                 {section.body}
                               </p>
                             </motion.div>
@@ -972,7 +992,7 @@ export default function HomePage() {
                         <motion.section
                           layout
                           variants={shouldReduceMotion ? undefined : itemVariants}
-                          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6"
+                          className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6"
                         >
                           <h3 className="text-lg font-semibold text-white">
                             Key Points
@@ -985,8 +1005,8 @@ export default function HomePage() {
                                 variants={shouldReduceMotion ? undefined : itemVariants}
                                 className="flex items-start gap-3"
                               >
-                                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--primary)] shadow-[0_0_6px_rgba(96,165,250,0.6)]" />
-                                <span className="leading-7 text-[var(--foreground)]">
+                                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.6)]" />
+                                <span className="leading-7 text-slate-200">
                                   {point}
                                 </span>
                               </motion.li>
@@ -1000,7 +1020,7 @@ export default function HomePage() {
                           <motion.section
                             layout
                             variants={shouldReduceMotion ? undefined : itemVariants}
-                            className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6"
+                            className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6"
                           >
                             <h3 className="text-lg font-semibold text-white">
                               Related Questions
@@ -1012,7 +1032,7 @@ export default function HomePage() {
                                   layout
                                   variants={shouldReduceMotion ? undefined : itemVariants}
                                   onClick={() => askRelatedQuestion(related)}
-                                  className="cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/85 transition-colors duration-150 hover:border-blue-400 hover:bg-white/10 hover:text-white"
+                                  className="cursor-pointer rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 transition-colors duration-150 hover:border-blue-400 hover:bg-white/10 hover:text-white"
                                 >
                                   {related}
                                 </motion.button>
@@ -1025,13 +1045,13 @@ export default function HomePage() {
                         <motion.section
                           layout
                           variants={shouldReduceMotion ? undefined : itemVariants}
-                          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6"
+                          className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6"
                         >
                           <div className="mb-4 flex items-center justify-between gap-4">
                             <h3 className="text-lg font-semibold text-white">
                               Sources
                             </h3>
-                            <div className="text-xs uppercase tracking-wide text-[var(--muted)]">
+                            <div className="text-xs uppercase tracking-wide text-slate-400">
                               {answerData.citations.length} source
                               {answerData.citations.length === 1 ? "" : "s"}
                             </div>
@@ -1054,10 +1074,10 @@ export default function HomePage() {
                                   href={citation.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="group block rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-3 sm:p-4 transition hover:border-[var(--primary)] hover:bg-white/[0.02] hover:shadow-[0_0_18px_rgba(96,165,250,0.12)]"
+                                  className="group block rounded-2xl border border-white/10 bg-white/5 p-3 transition-colors duration-150 hover:border-blue-400 hover:bg-white/10 sm:p-4"
                                 >
                                   <div className="flex items-start gap-4">
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--background)] text-sm font-semibold text-white sm:h-10 sm:w-10">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-sm font-semibold text-white sm:h-10 sm:w-10">
                                       {initial}
                                     </div>
 
@@ -1069,16 +1089,16 @@ export default function HomePage() {
                                           </div>
 
                                           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                                            <span className="rounded-full border border-[var(--border)] bg-white/[0.03] px-2 py-1 text-[var(--foreground)]">
+                                            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-slate-200">
                                               {sourceLabel}
                                             </span>
-                                            <span className="text-[var(--muted)]">
+                                            <span className="text-slate-400">
                                               {hostname}
                                             </span>
                                           </div>
                                         </div>
 
-                                        <div className="shrink-0 text-[var(--muted)] transition group-hover:text-[var(--primary)]">
+                                        <div className="shrink-0 text-slate-400 transition-colors duration-150 group-hover:text-blue-300">
                                           ↗
                                         </div>
                                       </div>
@@ -1098,9 +1118,9 @@ export default function HomePage() {
                   key={answerAnimationKey}
                   {...answerMotionProps}
                   layout
-                  className="whitespace-pre-wrap rounded-2xl border border-[var(--border)] bg-[var(--card)] sm:p-6 will-change-transform"
+                  className="whitespace-pre-wrap rounded-2xl border border-white/10 bg-slate-900 p-4 will-change-transform sm:p-6"
                 >
-                  <div className="mb-2 text-sm text-[var(--muted)]">Answer</div>
+                  <div className="mb-2 text-sm text-slate-400">Answer</div>
                   <p>{answer}</p>
                 </motion.div>
               ) : (
@@ -1115,8 +1135,52 @@ export default function HomePage() {
             </AnimatePresence>
           </main>
 
-          <SiteFooter />
-		  
+          <footer className="border-t border-white/10">
+            <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-5 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <SciSeekLogo className="h-9 w-9" />
+                <div>
+                  <div className="font-medium text-white/85">SciSeek</div>
+                  <div className="text-xs">
+                    Structured science answers for curious minds.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <Link
+                  href="/about"
+                  className="transition-colors duration-150 hover:text-blue-300"
+                >
+                  About
+                </Link>
+                <Link
+                  href="/story"
+                  className="transition-colors duration-150 hover:text-blue-300"
+                >
+                  SciSeek Story
+                </Link>
+                <Link
+                  href="/contact"
+                  className="transition-colors duration-150 hover:text-blue-300"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/privacy"
+                  className="transition-colors duration-150 hover:text-blue-300"
+                >
+                  Privacy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="transition-colors duration-150 hover:text-blue-300"
+                >
+                  Terms
+                </Link>
+              </div>
+            </div>
+          </footer>
         </div>
       </div>
     </div>
