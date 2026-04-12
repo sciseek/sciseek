@@ -5,62 +5,28 @@
    ========================= */
 
 :root {
-  /* Base backgrounds */
-  --background: 222 47% 11%;         /* #0B1220 */
-  --foreground: 210 20% 92%;         /* #E7ECF3 */
+  /* Base */
+  --background: #0b1220;
+  --foreground: #e5e7eb;
 
   /* Surfaces */
-  --card: 217 33% 14%;               /* #111827 */
-  --card-foreground: 210 20% 92%;
+  --card: #111827;
+  --panel: #0f172a;
 
-  --popover: 217 33% 14%;
-  --popover-foreground: 210 20% 92%;
+  /* UI */
+  --border: #1f2937;
+  --input: #1f2937;
 
-  /* Primary brand */
-  --primary: 213 94% 68%;            /* #60A5FA */
-  --primary-foreground: 222 47% 11%;
+  /* Text */
+  --muted: #9ca3af;
 
-  /* Secondary / muted surfaces */
-  --secondary: 215 28% 17%;          /* slightly lifted panel */
-  --secondary-foreground: 210 20% 92%;
+  /* Brand */
+  --primary: #60a5fa;
 
-  --muted: 217 24% 18%;
-  --muted-foreground: 215 15% 65%;   /* #94A3B8-ish */
-
-  /* Accent */
-  --accent: 217 33% 20%;
-  --accent-foreground: 210 20% 92%;
-
-  /* UI states */
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 210 20% 98%;
-
-  --border: 217 24% 22%;
-  --input: 217 24% 18%;
-  --ring: 213 94% 68%;
-
-  /* Optional chart colors if needed later */
-  --chart-1: 213 94% 68%;
-  --chart-2: 199 89% 48%;
-  --chart-3: 221 83% 53%;
-  --chart-4: 188 95% 43%;
-  --chart-5: 230 89% 67%;
-
-  /* Radius */
-  --radius: 0.9rem;
-
-  /* App-specific tokens */
-  --sidebar: 220 39% 13%;            /* #0F172A */
-  --sidebar-foreground: 210 20% 92%;
-  --sidebar-border: 217 24% 22%;
-  --sidebar-hover: 217 33% 18%;
-  --sidebar-active: 217 33% 22%;
-
-  --panel: 217 33% 14%;
-  --panel-2: 220 39% 13%;
-  --panel-hover: 217 24% 18%;
-
-  --hero-glow: 213 94% 68%;
+  /* Sidebar */
+  --sidebar: #0f172a;
+  --sidebar-hover: #1e293b;
+  --sidebar-active: #334155;
 }
 
 /* =========================
@@ -70,7 +36,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, Exo 2;
+  font-family: system-ui, sans-serif;
 }
 
 /* subtle gradient for premium feel */
