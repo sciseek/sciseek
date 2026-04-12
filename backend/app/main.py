@@ -6,7 +6,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import Base, SessionLocal, engine
-from app.models import DailyUsage, SavedQuestion, WaitlistSignup
+from pydantic import BaseModel
+from typing import Any
+
+from app.models import AnalyticsEvent, DailyUsage, SavedQuestion, WaitlistSignup
 from app.schemas import AskRequest, AskResponse, UsageInfo, WaitlistRequest, WaitlistResponse
 from app.services.openai_client import generate_sciseek_answer
 
@@ -29,6 +32,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class AnalyticsEventRequest(BaseModel):
+    event_name: str
+    session_id: str | None = None
+    properties: dict[str, Any] | None = None
+
 
 
 def get_client_ip(request: Request) -> str:
@@ -73,6 +82,27 @@ def build_usage_info(question_count: int, paywall_hit: bool) -> UsageInfo:
     )
 
 
+def safe_track_event(
+    db,
+    event_name: str,
+    identifier: str | None = None,
+    session_id: str | None = None,
+    properties: dict[str, Any] | None = None,
+) -> None:
+    try:
+        event = AnalyticsEvent(
+            event_name=event_name,
+            identifier=identifier,
+            session_id=session_id,
+            properties=properties or {},
+        )
+        db.add(event)
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        print("Analytics tracking error:", exc)
+
+
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "SciSeek API is running"}
@@ -96,9 +126,35 @@ def ask_question(payload: AskRequest, request: Request):
 
     try:
         identifier = make_identifier(request)
+        session_id = request.headers.get("x-session-id")
         usage = get_or_create_usage(db, identifier)
 
+        safe_track_event(
+            db,
+            event_name="ask_submitted",
+            identifier=identifier,
+            session_id=session_id,
+            properties={
+                "tier": tier,
+                "mode": mode,
+                "question_length": len(question),
+            },
+        )
+
         if usage.question_count >= FREE_DAILY_LIMIT:
+            safe_track_event(
+                db,
+                event_name="paywall_hit",
+                identifier=identifier,
+                session_id=session_id,
+                properties={
+                    "tier": tier,
+                    "mode": mode,
+                    "question_count": usage.question_count,
+                    "daily_limit": FREE_DAILY_LIMIT,
+                },
+            )
+
             return AskResponse(
                 is_science=True,
                 related_questions=[],
@@ -126,6 +182,18 @@ def ask_question(payload: AskRequest, request: Request):
         usage.question_count += 1
         db.commit()
         db.refresh(usage)
+
+        safe_track_event(
+            db,
+            event_name="ask_succeeded",
+            identifier=identifier,
+            session_id=session_id,
+            properties={
+                "tier": tier,
+                "mode": mode,
+                "question_count": usage.question_count,
+            },
+        )
 
         return AskResponse(
             **answer_data,
@@ -180,6 +248,7 @@ def join_waitlist(payload: WaitlistRequest, request: Request):
 
     db = SessionLocal()
     identifier = make_identifier(request)
+    session_id = request.headers.get("x-session-id")
 
     try:
         existing = db.query(WaitlistSignup).filter(WaitlistSignup.email == email).first()
@@ -197,10 +266,38 @@ def join_waitlist(payload: WaitlistRequest, request: Request):
 
         db.commit()
 
+        safe_track_event(
+            db,
+            event_name="waitlist_joined",
+            identifier=identifier,
+            session_id=session_id,
+            properties={
+                "source": payload.source,
+            },
+        )
+
         return WaitlistResponse(success=True, message="Thanks — you’re on the waitlist.")
     except Exception as exc:
         db.rollback()
         print("Waitlist error:", exc)
         raise HTTPException(status_code=500, detail="Failed to join waitlist.")
+    finally:
+        db.close()
+
+
+@app.post("/api/analytics")
+def create_analytics_event(payload: AnalyticsEventRequest, request: Request):
+    db = SessionLocal()
+    identifier = make_identifier(request)
+
+    try:
+        safe_track_event(
+            db,
+            event_name=payload.event_name,
+            identifier=identifier,
+            session_id=payload.session_id or request.headers.get("x-session-id"),
+            properties=payload.properties or {},
+        )
+        return {"success": True}
     finally:
         db.close()
