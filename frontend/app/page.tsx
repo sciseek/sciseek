@@ -1005,7 +1005,7 @@ export default function HomePage() {
                                   layout
                                   variants={shouldReduceMotion ? undefined : itemVariants}
                                   onClick={() => askRelatedQuestion(related)}
-                                  className="rounded-full border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-sm text-[var(--foreground)] transition hover:border-[var(--primary)] hover:text-white hover:shadow-[0_0_10px_rgba(96,165,250,0.2)]"
+                                  className="cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-white/85 transition-colors duration-150 hover:border-blue-400 hover:bg-white/10 hover:text-white"
                                 >
                                   {related}
                                 </motion.button>
