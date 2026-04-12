@@ -270,7 +270,7 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
   return (
     <div className="mx-auto mt-10 max-w-2xl text-center sm:mt-14">
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_24px_rgba(59,130,246,0.12)] sm:mb-5 sm:h-14 sm:w-14">
-        <SciSeekLogo className="h-10 w-10 border-0 bg-transparent" />
+        <SciSeekLogo className="h-40 w-40 border-0 bg-transparent" />
       </div>
 
       <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-4xl">
@@ -595,7 +595,7 @@ export default function HomePage() {
           <div className="border-b border-white/10 p-4">
             <button
               onClick={handleNewQuestion}
-              className="w-full cursor-pointer rounded-xl bg-blue-500 px-4 py-3 text-left text-sm font-medium text-black transition-colors duration-150 hover:bg-blue-400"
+              className="w-full cursor-pointer rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black cursor-pointer transition hover:opacity-70"
             >
               + New Question
             </button>
@@ -845,7 +845,7 @@ export default function HomePage() {
                             disabled={isDisabled}
                             className={`px-3 py-2 text-sm font-medium capitalize transition-colors duration-150 ${
                               isActive
-                                ? "cursor-pointer bg-blue-500 text-black"
+                                ? "cursor-pointer bg-[var(--primary)] text-black"
                                 : isDisabled
                                   ? "cursor-not-allowed text-white/30"
                                   : "cursor-pointer text-white/75 hover:bg-white/10 hover:text-white"
@@ -867,7 +867,7 @@ export default function HomePage() {
                 <button
                   onClick={handleAsk}
                   disabled={isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 text-black transition-colors duration-150 hover:bg-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 text-black cursor-pointer transition hover:opacity-70 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   {isLoading && (
                     <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
