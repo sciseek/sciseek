@@ -2,13 +2,6 @@ from pydantic import BaseModel
 from typing import List, Literal, Dict, Any
 
 
-class UsageInfo(BaseModel):
-    question_count: int
-    daily_limit: int
-    remaining: int
-    paywall_hit: bool
-
-
 class AskRequest(BaseModel):
     question: str
     tier: Literal["free", "paid"] = "free"
@@ -31,6 +24,13 @@ class VisualBlock(BaseModel):
     data: Dict[str, Any]
 
 
+class UsageInfo(BaseModel):
+    question_count: int
+    daily_limit: int
+    remaining: int
+    paywall_hit: bool
+
+
 class AskResponse(BaseModel):
     is_science: bool
     refusal_message: str | None = None
@@ -43,6 +43,16 @@ class AskResponse(BaseModel):
     citations: List[Citation] | None = None
     visual: VisualBlock | None = None
 
-    status: str = "ok"
+    status: Literal["ok", "paywalled", "error"] = "ok"
     usage: UsageInfo | None = None
     message: str | None = None
+
+
+class WaitlistRequest(BaseModel):
+    email: str
+    source: str = "paywall"
+
+
+class WaitlistResponse(BaseModel):
+    success: bool
+    message: str
