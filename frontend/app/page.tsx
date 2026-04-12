@@ -274,7 +274,7 @@ function EmptyState({ onAsk }: { onAsk: (q: string) => void }) {
       </div>
 
       <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-4xl">
-        Ask better science questions.
+        Get better science answers.
       </h1>
 
       <p className="mt-4 text-sm text-slate-400 sm:text-base">
