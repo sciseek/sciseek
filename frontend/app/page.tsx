@@ -16,6 +16,13 @@ type Citation = {
   source: string;
 };
 
+type UsageInfo = {
+  question_count: number;
+  daily_limit: number;
+  remaining: number;
+  paywall_hit: boolean;
+};
+
 type AskResponse = {
   is_science: boolean;
   refusal_message?: string | null;
@@ -25,6 +32,9 @@ type AskResponse = {
   key_points?: string[] | null;
   related_questions: string[];
   citations?: Citation[] | null;
+  status?: "ok" | "paywalled" | "error";
+  usage?: UsageInfo | null;
+  message?: string | null;
 };
 
 type HistoryItem = {
@@ -180,8 +190,8 @@ const starterHistory: HistoryItem[] = [
 ];
 
 const DISPLAY_LIMIT = 15;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://sciseek-backend.onrender.com";
 
-<SciSeekLogo />
 
 function SkeletonLine({
   width = "w-full",
@@ -360,6 +370,11 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [tier, setTier] = useState<"free" | "paid">("free");
   const [mode, setMode] = useState<"simple" | "standard" | "deep">("standard");
+  const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [email, setEmail] = useState("");
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -404,6 +419,7 @@ export default function HomePage() {
     setAnswer(null);
     setAnswerData(null);
     setActiveQuestion(null);
+    setShowPaywall(false);
 
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -436,6 +452,8 @@ export default function HomePage() {
     setAnswer(null);
     setAnswerData(null);
     setActiveQuestion(null);
+    setShowPaywall(false);
+    setWaitlistSubmitted(false);
     setIsLoading(true);
 
     if (topRef.current) {
@@ -453,7 +471,7 @@ export default function HomePage() {
     let newAnswerData: AskResponse | null = null;
 
     try {
-      const res = await fetch("https://sciseek-backend.onrender.com/api/ask", {
+      const res = await fetch(`${API_BASE_URL}/api/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -467,8 +485,20 @@ export default function HomePage() {
 
       const data: AskResponse = await res.json();
 
+      setUsage(data.usage ?? null);
+
+      if (data.status === "paywalled") {
+        setShowPaywall(true);
+        setAnswer(null);
+        setAnswerData(null);
+        setActiveQuestion(trimmedQuestion);
+        return;
+      }
+
+      setShowPaywall(false);
+
       if (!res.ok) {
-        newAnswer = "Invalid request. Please adjust your question and try again.";
+        newAnswer = data.message || "Invalid request. Please adjust your question and try again.";
       }
 
       newAnswerData = data;
@@ -503,6 +533,10 @@ export default function HomePage() {
       newAnswerData = null;
     } finally {
       setIsLoading(false);
+    }
+
+    if (newAnswerData?.status === "paywalled") {
+      return;
     }
 
     setAnswer(newAnswer);
@@ -550,6 +584,36 @@ export default function HomePage() {
     setTimeout(() => {
       handleAskWithQuestion(related);
     }, 0);
+  }
+
+  async function handleWaitlistSubmit(source: "paywall" | "homepage") {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || waitlistLoading) return;
+
+    setWaitlistLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/waitlist`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          source,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Waitlist signup failed");
+      }
+
+      setWaitlistSubmitted(true);
+    } catch (error) {
+      console.error("Waitlist request failed:", error);
+    } finally {
+      setWaitlistLoading(false);
+    }
   }
 
   const answerAnimationKey = useMemo(() => {
@@ -876,10 +940,83 @@ export default function HomePage() {
                 </button>
               </div>
 
+              {usage && !showPaywall && (
+                <div className="mt-3 text-sm text-slate-400">
+                  {usage.remaining} free question{usage.remaining === 1 ? "" : "s"} left today
+                </div>
+              )}
+
+              {!usage && (
+                <div className="mt-3 text-sm text-slate-400">
+                  5 free questions per day during soft launch
+                </div>
+              )}
+
               {isLoading && (
                 <div className="mt-3 text-sm text-slate-400">Searching...</div>
               )}
             </div>
+
+            {showPaywall && (
+              <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 sm:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="max-w-2xl">
+                    <h2 className="text-xl font-semibold text-amber-200">
+                      You’ve reached today’s free limit
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-amber-100/80">
+                      SciSeek is in soft launch. Pro access with more questions,
+                      Explain This, and Fact Check Mode is coming soon.
+                    </p>
+                  </div>
+
+                  {usage && (
+                    <div className="rounded-xl border border-amber-300/20 bg-black/10 px-3 py-2 text-sm text-amber-100/80">
+                      {usage.question_count}/{usage.daily_limit} used today
+                    </div>
+                  )}
+                </div>
+
+                {!waitlistSubmitted ? (
+                  <form
+                    className="mt-4 flex flex-col gap-3 sm:flex-row"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void handleWaitlistSubmit("paywall");
+                    }}
+                  >
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email for Pro updates"
+                      className="flex-1 rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      disabled={waitlistLoading}
+                      className="rounded-xl bg-amber-300 px-4 py-3 font-medium text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {waitlistLoading ? "Joining..." : "Join waitlist"}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+                    Thanks — you’re on the waitlist.
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
+                    Explain This (Pro)
+                  </span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
+                    Fact Check Mode
+                  </span>
+                </div>
+              </div>
+            )}
 
             <AnimatePresence mode="wait" initial={false}>
               {isLoading ? (
@@ -1100,6 +1237,44 @@ export default function HomePage() {
                 </motion.div>
               )}
             </AnimatePresence>
+            <section className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
+              <h2 className="text-xl font-semibold text-white">
+                Get daily science explained simply
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+                Join the SciSeek waitlist for soft launch updates and future Pro access.
+              </p>
+
+              {!waitlistSubmitted ? (
+                <form
+                  className="mt-4 flex flex-col gap-3 sm:flex-row"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void handleWaitlistSubmit("homepage");
+                  }}
+                >
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="flex-1 rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-500"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={waitlistLoading}
+                    className="rounded-xl bg-white px-4 py-3 font-medium text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {waitlistLoading ? "Joining..." : "Join waitlist"}
+                  </button>
+                </form>
+              ) : (
+                <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+                  Thanks — you’re on the waitlist.
+                </div>
+              )}
+            </section>
           </main>
 
           <footer className="border-t border-white/10">
