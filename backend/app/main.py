@@ -150,4 +150,33 @@ def get_history():
             for item in items
         ]
     finally:
-        db.close()        
+        db.close()
+
+@app.post("/api/waitlist")
+def join_waitlist(request: Request):
+    data = request.json()
+    email = data.get("email")
+    source = data.get("source", "paywall")
+
+    db = SessionLocal()
+    identifier = make_identifier(request)
+
+    try:
+        existing = db.query(WaitlistSignup).filter_by(email=email).first()
+        if not existing:
+            db.add(
+                WaitlistSignup(
+                    email=email,
+                    source=source,
+                    identifier=identifier,
+                )
+            )
+            db.commit()
+
+        return {"success": True}
+
+    except:
+        db.rollback()
+        return {"success": False}
+    finally:
+        db.close()
