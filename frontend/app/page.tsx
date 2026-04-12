@@ -873,10 +873,10 @@ export default function HomePage() {
                 <button
                   onClick={handleAsk}
                   disabled={isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 text-black transition hover:bg-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 text-black transition-colors duration-150 hover:bg-blue-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   {isLoading && (
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent"/>
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
                   )}
                   {isLoading ? "Thinking..." : "Ask"}
                 </button>
