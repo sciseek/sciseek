@@ -1,5 +1,4 @@
 import PageShell from "../(marketing)/page-shell";
-import { GoogleAnalytics } from '@next/third-parties/google'
 
 export default function AboutPage() {
   return (
@@ -26,6 +25,5 @@ export default function AboutPage() {
         </p>
       </>
     </PageShell>
-	<GoogleAnalytics gaId="G-S8HY1NX2BR" />
   );
 }
