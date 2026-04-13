@@ -27,6 +27,7 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "https://sciseek-app.vercel.app",
         "https://www.sciseek-app.vercel.app",
+        "https://www.sciseek.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
