@@ -1,7 +1,6 @@
 import Link from "next/link";
 import SiteFooter from "../components/site-footer";
 import SciSeekLogo from "../components/sciseek-logo";
-import { GoogleAnalytics } from '@next/third-parties/google'
 
 <SciSeekLogo />
 
@@ -75,6 +74,6 @@ export default function PageShell({
 	  
 	  <SiteFooter />
 	  
-    </div><GoogleAnalytics gaId="G-S8HY1NX2BR" />
+    </div>
   );
 }
