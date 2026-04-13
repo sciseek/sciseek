@@ -3,15 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from '@next/third-parties/google'
 
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>{children}</body>
-      <GoogleAnalytics gaId="G-396713125" />
-    </html>
-  )
-}
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,6 +29,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
+	  <GoogleAnalytics gaId="G-396713125" />
     </html>
   );
 }
