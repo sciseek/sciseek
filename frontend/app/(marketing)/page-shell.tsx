@@ -1,7 +1,6 @@
 import Link from "next/link";
 import SiteFooter from "../components/site-footer";
 import SciSeekLogo from "../components/sciseek-logo";
-import { Analytics } from "@vercel/analytics/next"
 
 <SciSeekLogo />
 
