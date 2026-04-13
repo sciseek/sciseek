@@ -75,7 +75,6 @@ export default function PageShell({
 	  
 	  <SiteFooter />
 	  
-    </div>
-	<GoogleAnalytics gaId="G-S8HY1NX2BR" />
+    </div><GoogleAnalytics gaId="G-S8HY1NX2BR" />
   );
 }
