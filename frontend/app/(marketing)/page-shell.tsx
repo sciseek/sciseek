@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SiteFooter from "../components/site-footer";
 import SciSeekLogo from "../components/sciseek-logo";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 <SciSeekLogo />
 
