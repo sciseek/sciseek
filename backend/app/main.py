@@ -332,6 +332,10 @@ def get_admin_metrics(request: Request):
     finally:
         db.close()
 
+import json
+from datetime import datetime, timedelta
+from sqlalchemy import func
+
 @app.get("/api/admin/report")
 def get_admin_report(request: Request):
     verify_admin(request)
@@ -358,10 +362,25 @@ def get_admin_report(request: Request):
             .all()
         )
 
-        feature_counts = {}
+        feature_counts: dict[str, int] = {}
+
         for event in feature_events:
-            props = event.properties or {}
-            feature = props.get("feature", "unknown")
+            props = event.properties
+
+            if props is None:
+                feature = "unknown"
+            elif isinstance(props, dict):
+                feature = props.get("feature", "unknown")
+            elif isinstance(props, str):
+                try:
+                    parsed = json.loads(props)
+                    feature = parsed.get("feature", "unknown") if isinstance(parsed, dict) else "unknown"
+                except Exception:
+                    feature = "unknown"
+            else:
+                feature = "unknown"
+
+            feature = str(feature).strip() or "unknown"
             feature_counts[feature] = feature_counts.get(feature, 0) + 1
 
         top_features = [
