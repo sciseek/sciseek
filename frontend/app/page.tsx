@@ -37,10 +37,6 @@ type AskResponse = {
   message?: string | null;
 };
 
-type AnalyticsResponse = {
-  success: boolean;
-};
-
 type HistoryItem = {
   id: string;
   question: string;
@@ -194,7 +190,8 @@ const starterHistory: HistoryItem[] = [
 ];
 
 const DISPLAY_LIMIT = 15;
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://sciseek-backend.onrender.com";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://sciseek-backend.onrender.com";
 
 function getOrCreateSessionId() {
   if (typeof window === "undefined") return "";
@@ -207,7 +204,6 @@ function getOrCreateSessionId() {
   return id;
 }
 
-
 function SkeletonLine({
   width = "w-full",
   height = "h-4",
@@ -215,7 +211,9 @@ function SkeletonLine({
   width?: string;
   height?: string;
 }) {
-  return <div className={`animate-pulse rounded-md bg-white/10 ${height} ${width}`} />;
+  return (
+    <div className={`animate-pulse rounded-md bg-white/10 ${height} ${width}`} />
+  );
 }
 
 function LoadingSkeleton() {
@@ -383,14 +381,15 @@ export default function HomePage() {
   const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [tier, setTier] = useState<"free" | "paid">("free");
-  const [mode, setMode] = useState<"simple" | "standard" | "deep">("standard");
   const [usage, setUsage] = useState<UsageInfo | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [email, setEmail] = useState("");
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
   const [sessionId] = useState(() => getOrCreateSessionId());
+  const [activeTab, setActiveTab] = useState<
+    "ask" | "explain" | "factcheck"
+  >("ask");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -458,6 +457,7 @@ export default function HomePage() {
     setAnswerData(null);
     setActiveQuestion(null);
     setShowPaywall(false);
+    setActiveTab("ask");
 
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -476,13 +476,17 @@ export default function HomePage() {
     setAnswer(item.answer);
     setAnswerData(item.answerData ?? null);
     setActiveQuestion(item.question);
+    setActiveTab("ask");
 
     requestAnimationFrame(() => {
       resizeTextarea();
     });
   }
 
-  async function handleAskWithQuestion(questionText?: string) {
+  async function handleAskWithQuestion(
+    questionText?: string,
+    requestedMode: "simple" | "standard" = "standard"
+  ) {
     const trimmedQuestion = (questionText ?? question).trim();
     if (!trimmedQuestion || isLoading) return;
 
@@ -493,6 +497,7 @@ export default function HomePage() {
     setShowPaywall(false);
     setWaitlistSubmitted(false);
     setIsLoading(true);
+    setActiveTab("ask");
 
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -517,8 +522,8 @@ export default function HomePage() {
         },
         body: JSON.stringify({
           question: trimmedQuestion,
-          tier,
-          mode,
+          tier: "free",
+          mode: requestedMode,
         }),
       });
 
@@ -537,7 +542,8 @@ export default function HomePage() {
       setShowPaywall(false);
 
       if (!res.ok) {
-        newAnswer = data.message || "Invalid request. Please adjust your question and try again.";
+        newAnswer =
+          data.message || "Invalid request. Please adjust your question and try again.";
       }
 
       newAnswerData = data;
@@ -600,7 +606,7 @@ export default function HomePage() {
   }
 
   async function handleAsk() {
-    await handleAskWithQuestion();
+    await handleAskWithQuestion(undefined, "standard");
   }
 
   function askRelatedQuestion(related: string) {
@@ -613,6 +619,8 @@ export default function HomePage() {
     setAnswer(null);
     setAnswerData(null);
     setActiveQuestion(null);
+    setShowPaywall(false);
+    setActiveTab("ask");
 
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -626,7 +634,7 @@ export default function HomePage() {
     });
 
     setTimeout(() => {
-      handleAskWithQuestion(related);
+      void handleAskWithQuestion(related, "standard");
     }, 0);
   }
 
@@ -704,7 +712,7 @@ export default function HomePage() {
           <div className="border-b border-white/10 p-4">
             <button
               onClick={handleNewQuestion}
-              className="w-full cursor-pointer rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black cursor-pointer transition hover:opacity-70"
+              className="w-full cursor-pointer rounded-xl bg-[var(--primary)] px-4 py-3 text-left text-sm font-medium text-black transition hover:opacity-70"
             >
               + New Question
             </button>
@@ -715,7 +723,9 @@ export default function HomePage() {
               <SciSeekLogo className="h-11 w-11" />
               <div className="min-w-0">
                 <div className="text-base font-semibold tracking-tight text-white">
-                  <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
+                  <h1 className="logo-wordmark">
+                    Sci<span>Seek</span>
+                  </h1>
                 </div>
                 <div className="text-xs text-slate-400">
                   Structured science answers
@@ -830,7 +840,9 @@ export default function HomePage() {
                 <SciSeekLogo className="h-10 w-10 sm:h-12 sm:w-12" />
                 <div className="min-w-0">
                   <div className="text-lg font-semibold tracking-tight text-white sm:text-2xl">
-                    <h1 className="logo-wordmark">Sci<span>Seek</span></h1>
+                    <h1 className="logo-wordmark">
+                      Sci<span>Seek</span>
+                    </h1>
                   </div>
                   <div className="text-xs text-slate-400 sm:text-sm">
                     Search smarter. Understand deeper.
@@ -884,6 +896,43 @@ export default function HomePage() {
                 </span>
               </div>
 
+              <div className="mb-3 flex gap-2">
+                {[
+                  { key: "ask", label: "Ask" },
+                  { key: "explain", label: "Explain 🔒" },
+                  { key: "factcheck", label: "Fact Check 🔒" },
+                ].map((tab) => {
+                  const isActive = activeTab === tab.key;
+
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => {
+                        if (tab.key !== "ask") {
+                          setShowPaywall(true);
+                          void trackFrontendEvent("pro_feature_clicked", {
+                            feature: tab.key,
+                            location: "composer_tab",
+                          });
+                          return;
+                        }
+
+                        setActiveTab("ask");
+                        setShowPaywall(false);
+                      }}
+                      className={`rounded-lg border px-3 py-1.5 text-sm transition ${
+                        isActive
+                          ? "border-transparent bg-[var(--primary)] text-black"
+                          : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+
               <textarea
                 ref={textareaRef}
                 value={question}
@@ -896,7 +945,7 @@ export default function HomePage() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleAsk();
+                    void handleAsk();
                   }
                 }}
                 placeholder="Ask anything scientific..."
@@ -905,78 +954,15 @@ export default function HomePage() {
               />
 
               <div className="mt-3 text-xs text-slate-400">
-                Get a hook, summary, sections, key points, related questions, and
-                citations.
+                Ask a science question and get a clear, structured answer with
+                sources.
               </div>
 
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                      Tier
-                    </label>
-                    <select
-                      value={tier}
-                      onChange={(e) => {
-                        const nextTier = e.target.value as "free" | "paid";
-                        setTier(nextTier);
-
-                        if (nextTier === "free" && mode === "deep") {
-                          setMode("standard");
-                        }
-                      }}
-                      className="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none"
-                    >
-                      <option value="free">Free</option>
-                      <option value="paid">Paid</option>
-                    </select>
-                  </div>
-
-                  <div className="h-4 w-px bg-white/10" />
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                      Mode
-                    </span>
-
-                    <div className="flex overflow-hidden rounded-lg border border-white/10 bg-slate-900">
-                      {(["simple", "standard", "deep"] as const).map((m) => {
-                        const isDisabled = tier === "free" && m === "deep";
-                        const isActive = mode === m;
-
-                        return (
-                          <button
-                            key={m}
-                            type="button"
-                            onClick={() => {
-                              if (!isDisabled) setMode(m);
-                            }}
-                            disabled={isDisabled}
-                            className={`px-3 py-2 text-sm font-medium capitalize transition-colors duration-150 ${
-                              isActive
-                                ? "cursor-pointer bg-[var(--primary)] text-black"
-                                : isDisabled
-                                  ? "cursor-not-allowed text-white/30"
-                                  : "cursor-pointer text-white/75 hover:bg-white/10 hover:text-white"
-                            }`}
-                            title={isDisabled ? "More detailed analysis (Paid)" : ""}
-                          >
-                            {m === "deep" && tier === "free"
-                              ? "Deep 🔒"
-                              : m === "simple"
-                                ? "Basic"
-                                : m}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
+              <div className="mt-4 flex justify-end">
                 <button
-                  onClick={handleAsk}
+                  onClick={() => void handleAsk()}
                   disabled={isLoading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 text-black cursor-pointer transition hover:opacity-70 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 text-black transition hover:opacity-70 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   {isLoading && (
                     <div className="h-3 w-3 animate-spin rounded-full border-2 border-black border-t-transparent" />
@@ -987,7 +973,8 @@ export default function HomePage() {
 
               {usage && !showPaywall && (
                 <div className="mt-3 text-sm text-slate-400">
-                  {usage.remaining} free question{usage.remaining === 1 ? "" : "s"} left today
+                  {usage.remaining} free question
+                  {usage.remaining === 1 ? "" : "s"} left today
                 </div>
               )}
 
@@ -996,35 +983,6 @@ export default function HomePage() {
                   5 free questions per day during soft launch
                 </div>
               )}
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowPaywall(true);
-                    void trackFrontendEvent("pro_feature_clicked", {
-                      feature: "explain_this",
-                      location: "composer",
-                    });
-                  }}
-                  className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs text-amber-200 transition hover:bg-amber-400/15"
-                >
-                  Explain This (Pro) 🔒
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowPaywall(true);
-                    void trackFrontendEvent("pro_feature_clicked", {
-                      feature: "fact_check_mode",
-                      location: "composer",
-                    });
-                  }}
-                  className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs text-amber-200 transition hover:bg-amber-400/15"
-                >
-                  Fact Check Mode 🔒
-                </button>
-              </div>
 
               {isLoading && (
                 <div className="mt-3 text-sm text-slate-400">Searching...</div>
@@ -1080,33 +1038,6 @@ export default function HomePage() {
                     Thanks — you’re on the waitlist.
                   </div>
                 )}
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void trackFrontendEvent("pro_feature_clicked", {
-                        feature: "explain_this",
-                        location: "paywall",
-                      });
-                    }}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200 transition hover:bg-white/10"
-                  >
-                    Explain This (Pro)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void trackFrontendEvent("pro_feature_clicked", {
-                        feature: "fact_check_mode",
-                        location: "paywall",
-                      });
-                    }}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200 transition hover:bg-white/10"
-                  >
-                    Fact Check Mode
-                  </button>
-                </div>
               </div>
             )}
 
@@ -1136,6 +1067,20 @@ export default function HomePage() {
                     >
                       <div className="mb-2 text-sm text-slate-400">Answer</div>
                       <p className="leading-7">{answerData.refusal_message}</p>
+
+                      {answerData.related_questions?.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {answerData.related_questions.map((q, i) => (
+                            <button
+                              key={`${q}-${i}`}
+                              onClick={() => askRelatedQuestion(q)}
+                              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
+                            >
+                              {q}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </motion.section>
                   ) : (
                     <motion.div
@@ -1237,6 +1182,44 @@ export default function HomePage() {
                           </motion.section>
                         )}
 
+                      {answerData && !answerData.refusal_message && (
+                        <motion.section
+                          layout
+                          variants={shouldReduceMotion ? undefined : itemVariants}
+                          className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6"
+                        >
+                          <h3 className="text-lg font-semibold text-white">
+                            Explore this answer
+                          </h3>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!activeQuestion) return;
+                                void handleAskWithQuestion(activeQuestion, "simple");
+                              }}
+                              className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                            >
+                              Make this simpler
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowPaywall(true);
+                                void trackFrontendEvent("pro_feature_clicked", {
+                                  feature: "go_deeper",
+                                  location: "answer",
+                                });
+                              }}
+                              className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-200 transition hover:bg-amber-400/15"
+                            >
+                              Go deeper 🔒
+                            </button>
+                          </div>
+                        </motion.section>
+                      )}
+
                       {answerData.citations && answerData.citations.length > 0 && (
                         <motion.section
                           layout
@@ -1325,16 +1308,18 @@ export default function HomePage() {
                   {...answerMotionProps}
                   className="will-change-transform"
                 >
-                  <EmptyState onAsk={(q) => handleAskWithQuestion(q)} />
+                  <EmptyState onAsk={(q) => void handleAskWithQuestion(q, "standard")} />
                 </motion.div>
               )}
             </AnimatePresence>
+
             <section className="rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-6">
               <h2 className="text-xl font-semibold text-white">
                 Get daily science explained simply
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-                Join the SciSeek waitlist for soft launch updates and future Pro access.
+                Join the SciSeek waitlist for soft launch updates and future Pro
+                access.
               </p>
 
               {!waitlistSubmitted ? (
@@ -1374,7 +1359,11 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <SciSeekLogo className="h-9 w-9" />
                 <div>
-                  <div className="font-medium text-white/85"><h1 className="logo-wordmark">Sci<span>Seek</span></h1></div>
+                  <div className="font-medium text-white/85">
+                    <h1 className="logo-wordmark">
+                      Sci<span>Seek</span>
+                    </h1>
+                  </div>
                   <div className="text-xs">
                     Structured science answers for curious minds.
                   </div>
