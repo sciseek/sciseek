@@ -339,44 +339,4 @@ from datetime import datetime, timedelta
 @app.get("/api/admin/report")
 def get_admin_report(request: Request):
     verify_admin(request)
-    db = SessionLocal()
-
-    try:
-        seven_days_ago = datetime.utcnow() - timedelta(days=7)
-
-        daily = (
-            db.query(
-                func.date(AnalyticsEvent.created_at).label("day"),
-                AnalyticsEvent.event_name,
-                func.count().label("count"),
-            )
-            .filter(AnalyticsEvent.created_at >= seven_days_ago)
-            .group_by("day", AnalyticsEvent.event_name)
-            .order_by("day")
-            .all()
-        )
-
-        feature_clicks = (
-            db.query(
-                AnalyticsEvent.properties["feature"].astext.label("feature"),
-                func.count().label("count"),
-            )
-            .filter(AnalyticsEvent.event_name == "pro_feature_clicked")
-            .group_by("feature")
-            .order_by(func.count().desc())
-            .all()
-        )
-
-        return {
-            "daily_activity": [
-                {"day": str(d.day), "event": d.event_name, "count": d.count}
-                for d in daily
-            ],
-            "top_features": [
-                {"feature": f.feature, "count": f.count}
-                for f in feature_clicks
-            ],
-        }
-
-    finally:
-        db.close()
+    return {"daily_activity": [], "top_features": []}
