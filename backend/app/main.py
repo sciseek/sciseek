@@ -355,6 +355,27 @@ def get_admin_report(request: Request):
             .all()
         )
 
+        feature_events = (
+            db.query(AnalyticsEvent)
+            .filter(AnalyticsEvent.event_name == "pro_feature_clicked")
+            .all()
+        )
+
+        feature_counts = {}
+        for event in feature_events:
+            props = event.properties or {}
+            feature = props.get("feature", "unknown")
+            feature_counts[feature] = feature_counts.get(feature, 0) + 1
+
+        top_features = [
+            {"feature": feature, "count": count}
+            for feature, count in sorted(
+                feature_counts.items(),
+                key=lambda item: item[1],
+                reverse=True,
+            )
+        ]
+
         return {
             "daily_activity": [
                 {
@@ -364,7 +385,7 @@ def get_admin_report(request: Request):
                 }
                 for row in daily
             ],
-            "top_features": [],
+            "top_features": top_features,
         }
     finally:
         db.close()
