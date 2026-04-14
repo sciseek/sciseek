@@ -332,11 +332,56 @@ def get_admin_metrics(request: Request):
     finally:
         db.close()
 
-from sqlalchemy import func
 from datetime import datetime, timedelta
-
+from sqlalchemy import func
 
 @app.get("/api/admin/report")
 def get_admin_report(request: Request):
     verify_admin(request)
-    return {"daily_activity": [], "top_features": []}
+    db = SessionLocal()
+
+    try:
+        seven_days_ago = datetime.utcnow() - timedelta(days=7)
+
+        daily = (
+            db.query(
+                func.date(AnalyticsEvent.created_at).label("day"),
+                AnalyticsEvent.event_name.label("event_name"),
+                func.count().label("count"),
+            )
+            .filter(AnalyticsEvent.created_at >= seven_days_ago)
+            .group_by(func.date(AnalyticsEvent.created_at), AnalyticsEvent.event_name)
+            .order_by(func.date(AnalyticsEvent.created_at))
+            .all()
+        )
+
+        top_features = (
+            db.query(
+                AnalyticsEvent.properties["feature"].astext.label("feature"),
+                func.count().label("count"),
+            )
+            .filter(AnalyticsEvent.event_name == "pro_feature_clicked")
+            .group_by(AnalyticsEvent.properties["feature"].astext)
+            .order_by(func.count().desc())
+            .all()
+        )
+
+        return {
+            "daily_activity": [
+                {
+                    "day": str(row.day),
+                    "event": row.event_name,
+                    "count": row.count,
+                }
+                for row in daily
+            ],
+            "top_features": [
+                {
+                    "feature": row.feature or "unknown",
+                    "count": row.count,
+                }
+                for row in top_features
+            ],
+        }
+    finally:
+        db.close()
