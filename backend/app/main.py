@@ -332,9 +332,6 @@ def get_admin_metrics(request: Request):
     finally:
         db.close()
 
-from datetime import datetime, timedelta
-from sqlalchemy import func
-
 @app.get("/api/admin/report")
 def get_admin_report(request: Request):
     verify_admin(request)
@@ -387,5 +384,9 @@ def get_admin_report(request: Request):
             ],
             "top_features": top_features,
         }
+
+    except Exception as exc:
+        print("ADMIN REPORT ERROR:", exc)
+        raise HTTPException(status_code=500, detail="Admin report failed.")
     finally:
         db.close()
