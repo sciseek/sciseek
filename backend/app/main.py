@@ -355,17 +355,6 @@ def get_admin_report(request: Request):
             .all()
         )
 
-        top_features = (
-            db.query(
-                AnalyticsEvent.properties["feature"].astext.label("feature"),
-                func.count().label("count"),
-            )
-            .filter(AnalyticsEvent.event_name == "pro_feature_clicked")
-            .group_by(AnalyticsEvent.properties["feature"].astext)
-            .order_by(func.count().desc())
-            .all()
-        )
-
         return {
             "daily_activity": [
                 {
@@ -375,13 +364,7 @@ def get_admin_report(request: Request):
                 }
                 for row in daily
             ],
-            "top_features": [
-                {
-                    "feature": row.feature or "unknown",
-                    "count": row.count,
-                }
-                for row in top_features
-            ],
+            "top_features": [],
         }
     finally:
         db.close()
