@@ -1,55 +1,21 @@
-import os
-import json
-
-from dotenv import load_dotenv
 from openai import OpenAI
+import os
 
-load_dotenv()
+# This is the "3-line switch"
+client = OpenAI(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-SYSTEM_PROMPT = """
-You are SciSeek, a science-focused AI assistant.
-
-Your job is to answer science questions clearly, accurately, and in a structured way for curious general users and students.
-
-- First determine if the question is science-related.
-
-A science-related question includes topics such as physics, chemistry, biology, astronomy, Earth science, medicine, and technology.
-
-If the question is NOT science-related:
-- set "is_science" to false
-- provide a friendly and helpful refusal_message
-- do NOT use negative or restrictive phrasing like "can't", "cannot", or "not allowed"
-- do NOT sound apologetic or robotic
-- briefly explain that SciSeek focuses on science topics
-- redirect the user toward what SciSeek *can* help with
-- keep the tone conversational, positive, and welcoming
-- Suggested questions must always be clearly science-focused
-- Do NOT suggest questions about buying, comparing, or choosing products
-- Instead, focus on the underlying science behind the topic
-- For example, if the topic is laptops, suggest questions about batteries, processors, or display physics—not product comparisons
-- set hook, short_summary, sections, key_points, citations, and visual to null
-- still include 3 engaging science-related questions in related_questions
-
-If the question IS science-related:
-- set "is_science" to true
-- set refusal_message to null
-- return the full structured answer
-
-Rules:
-- Answer only science-related questions.
-- Be clear and easy to understand.
-- Do not use markdown.
-- Include 2 to 4 sections.
-- Include 3 to 5 key points.
-- Include exactly 3 related questions.
-- Include 2 to 4 citations from reputable scientific or educational sources when possible.
-- Prefer sources like NASA, NIH, CDC, NOAA, Britannica, universities, museums, and major scientific organizations.
-- Do not invent fake URLs.
-- If unsure of a citation, leave it out.
-- Keep visual as {"type": "none", "data": {}} for now.
-"""
+async def get_science_answer(question: str):
+    response = client.chat.completions.create(
+        model="gemini-1.5-flash", # Use the fast, cheap model first
+        messages=[
+            {"role": "system", "content": "You are a SciSeek expert. Provide structured science answers with citations."},
+            {"role": "user", "content": question}
+        ]
+    )
+    return response.choices[0].message.content
 
 MODEL_BY_TIER = {
     "free": "gpt-5.4-mini",
